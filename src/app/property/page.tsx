@@ -110,6 +110,19 @@ export default function PropertyHistoryPage() {
                   {formatNumber(property.size_sqft)} sqft
                 </Badge>
               </div>
+              {/* Area & Developer Info */}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-sm">
+                {property.area && (
+                  <span className="text-slate-400">
+                    <span className="text-slate-500">Area:</span> <span className="text-white">{property.area}</span>
+                  </span>
+                )}
+                {property.master_project && (
+                  <span className="text-slate-400">
+                    <span className="text-slate-500">Project:</span> <span className="text-white">{property.master_project}</span>
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
