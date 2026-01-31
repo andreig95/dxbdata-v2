@@ -87,6 +87,27 @@ function formatNumber(num: number): string {
   return num.toLocaleString()
 }
 
+function parseDate(dateStr: string): Date | null {
+  if (!dateStr) return null
+  // Handle DD-MM-YYYY format
+  if (dateStr.includes('-') && dateStr.split('-')[0].length <= 2) {
+    const [day, month, year] = dateStr.split('-')
+    return new Date(`${year}-${month}-${day}`)
+  }
+  // Handle YYYY-MM-DD format
+  return new Date(dateStr)
+}
+
+function formatDate(dateStr: string): string {
+  const date = parseDate(dateStr)
+  if (!date || isNaN(date.getTime())) return '-'
+  return date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: '2-digit'
+  })
+}
+
 // Loading fallback component
 function TransactionsLoading() {
   return (
@@ -541,11 +562,7 @@ function TransactionsContent() {
                           className="border-b border-slate-800/50 hover:bg-slate-800/30 cursor-pointer transition-colors"
                         >
                           <td className="px-4 py-3 text-sm text-slate-400">
-                            {tx.instance_date ? new Date(tx.instance_date).toLocaleDateString('en-GB', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: '2-digit'
-                            }) : '-'}
+                            {formatDate(tx.instance_date)}
                           </td>
                           <td className="px-4 py-3">
                             <div className="text-sm text-white font-medium">{tx.building_name_en || tx.project_name_en || '-'}</div>
