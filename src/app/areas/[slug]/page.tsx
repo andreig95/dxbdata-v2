@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getAreas, getAreaDetail, getTransactions, formatPrice, formatNumber } from '@/lib/api'
 import { TransactionsTable } from '@/components/TransactionsTable'
+import { resolveAreaName, getAreaDisplayName } from '@/lib/area-aliases'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -17,7 +18,8 @@ export const dynamic = 'force-dynamic'
 
 export default async function AreaDetailPage({ params }: PageProps) {
   const { slug } = await params
-  const areaName = slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  const displayName = getAreaDisplayName(slug) // For UI display
+  const areaName = resolveAreaName(slug) // For database queries
   
   let areaDetail: Awaited<ReturnType<typeof getAreaDetail>> | null = null
   let transactions: Awaited<ReturnType<typeof getTransactions>>['data'] = []
@@ -64,7 +66,7 @@ export default async function AreaDetailPage({ params }: PageProps) {
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-bold text-white">{areaName}</h1>
+                <h1 className="text-3xl font-bold text-white">{displayName}</h1>
                 <Badge 
                   className={yoyChange >= 0 
                     ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50' 
@@ -187,7 +189,7 @@ export default async function AreaDetailPage({ params }: PageProps) {
               <TabsContent value="buildings" className="mt-6">
                 <Card className="border-slate-800 bg-slate-900/50">
                   <CardHeader>
-                    <CardTitle className="text-white">Top Buildings in {areaName}</CardTitle>
+                    <CardTitle className="text-white">Top Buildings in {displayName}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-slate-500 py-8 text-center">Building data coming soon</p>
@@ -198,7 +200,7 @@ export default async function AreaDetailPage({ params }: PageProps) {
               <TabsContent value="developers" className="mt-6">
                 <Card className="border-slate-800 bg-slate-900/50">
                   <CardHeader>
-                    <CardTitle className="text-white">Active Developers in {areaName}</CardTitle>
+                    <CardTitle className="text-white">Active Developers in {displayName}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {areaDetail?.top_developers && areaDetail.top_developers.length > 0 ? (
