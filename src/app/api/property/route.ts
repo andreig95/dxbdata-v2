@@ -40,9 +40,13 @@ export async function GET(request: NextRequest) {
     const params: any[] = [building]
     
     if (size) {
-      const sizeNum = parseFloat(size)
+      // Size comes in as sqft, convert to sqm for DB query
+      const sizeSqft = parseFloat(size)
+      const sizeSqm = sizeSqft / 10.764
+      // Allow 2% tolerance for rounding differences
+      const tolerance = sizeSqm * 0.02
       query += ` AND procedure_area BETWEEN ? AND ?`
-      params.push(sizeNum - 0.5, sizeNum + 0.5)
+      params.push(sizeSqm - tolerance, sizeSqm + tolerance)
     }
     
     if (rooms) {
@@ -96,8 +100,8 @@ export async function GET(request: NextRequest) {
         area: firstSale?.area_name_en,
         type: type || firstSale?.property_sub_type_en,
         rooms: rooms || firstSale?.rooms_en,
-        size_sqm: size ? parseFloat(size) : firstSale?.procedure_area,
-        size_sqft: size ? Math.round(parseFloat(size) * 10.764) : Math.round((firstSale?.procedure_area || 0) * 10.764)
+        size_sqm: firstSale?.procedure_area || (size ? parseFloat(size) / 10.764 : 0),
+        size_sqft: size ? parseFloat(size) : Math.round((firstSale?.procedure_area || 0) * 10.764)
       },
       stats: {
         total_sales: transactions.length,
