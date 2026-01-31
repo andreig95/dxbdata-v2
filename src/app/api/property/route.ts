@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Database from 'better-sqlite3'
 import path from 'path'
+import { getDeveloper } from '@/lib/developers-lookup'
 
 const dbPath = path.join(process.cwd(), 'data', 'dld.db')
 
@@ -100,6 +101,7 @@ export async function GET(request: NextRequest) {
         area: firstSale?.area_name_en,
         project: firstSale?.project_name_en,
         master_project: firstSale?.master_project_en,
+        developer: getDeveloper(firstSale?.master_project_en, firstSale?.project_name_en),
         type: type || firstSale?.property_sub_type_en,
         rooms: rooms || firstSale?.rooms_en,
         size_sqm: firstSale?.procedure_area || (size ? parseFloat(size) / 10.764 : 0),

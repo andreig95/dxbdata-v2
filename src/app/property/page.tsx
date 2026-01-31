@@ -122,6 +122,11 @@ export default function PropertyHistoryPage() {
                     <span className="text-slate-500">Project:</span> <span className="text-white">{property.master_project}</span>
                   </span>
                 )}
+                {property.developer && (
+                  <span className="text-slate-400">
+                    <span className="text-slate-500">Developer:</span> <span className="text-cyan-400 font-medium">{property.developer}</span>
+                  </span>
+                )}
               </div>
             </div>
           </div>
