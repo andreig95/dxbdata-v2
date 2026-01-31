@@ -47,15 +47,32 @@ function generateTransactions(area: string, limit: number) {
   return transactions
 }
 
+// Store generated transactions to maintain consistency across paginated requests
+const transactionCache = new Map<string, ReturnType<typeof generateTransactions>>()
+
+function getOrGenerateTransactions(area: string) {
+  const cacheKey = area.toLowerCase()
+  if (!transactionCache.has(cacheKey)) {
+    // Generate a larger set for pagination
+    transactionCache.set(cacheKey, generateTransactions(area, 500))
+  }
+  return transactionCache.get(cacheKey)!
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const area = searchParams.get('area') || ''
   const limit = parseInt(searchParams.get('limit') || '20')
+  const offset = parseInt(searchParams.get('offset') || '0')
   
-  const transactions = generateTransactions(area, limit)
+  const allTransactions = getOrGenerateTransactions(area)
+  const paginatedTransactions = allTransactions.slice(offset, offset + limit)
   
   return NextResponse.json({
-    data: transactions,
-    total: 1000 + Math.floor(Math.random() * 5000)
+    data: paginatedTransactions,
+    total: allTransactions.length,
+    page: Math.floor(offset / limit) + 1,
+    pageSize: limit,
+    totalPages: Math.ceil(allTransactions.length / limit)
   })
 }

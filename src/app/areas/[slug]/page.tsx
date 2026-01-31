@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getAreas, getAreaDetail, getTransactions, formatPrice, formatNumber } from '@/lib/api'
+import { TransactionsTable } from '@/components/TransactionsTable'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -176,63 +177,11 @@ export default async function AreaDetailPage({ params }: PageProps) {
               </TabsList>
 
               <TabsContent value="transactions" className="mt-6">
-                <Card className="border-slate-800 bg-slate-900/50">
-                  <CardHeader>
-                    <CardTitle className="text-white">Recent Transactions in {areaName}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {transactions.length === 0 ? (
-                      <p className="text-slate-500 py-8 text-center">No transactions found</p>
-                    ) : (
-                      <div className="overflow-x-auto">
-                        <table className="w-full">
-                          <thead>
-                            <tr className="border-b border-slate-800 text-left text-sm text-slate-500">
-                              <th className="pb-3 font-medium">Date</th>
-                              <th className="pb-3 font-medium">Building</th>
-                              <th className="pb-3 font-medium">Type</th>
-                              <th className="pb-3 font-medium">Size</th>
-                              <th className="pb-3 font-medium text-right">Price</th>
-                              <th className="pb-3 font-medium text-right">Per sqm</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {transactions.map((tx, idx) => (
-                              <tr key={tx.id || idx} className="border-b border-slate-800/50 hover:bg-slate-800/30">
-                                <td className="py-3 text-sm text-slate-400">
-                                  {tx.instance_date ? new Date(tx.instance_date).toLocaleDateString('en-GB', {
-                                    day: '2-digit',
-                                    month: 'short',
-                                    year: '2-digit'
-                                  }) : '-'}
-                                </td>
-                                <td className="py-3">
-                                  <span className="text-sm text-white">{tx.building_name_en || '-'}</span>
-                                </td>
-                                <td className="py-3">
-                                  <Badge variant="outline" className="border-slate-700 text-slate-400">
-                                    {tx.property_sub_type_en || tx.property_type_en || '-'}
-                                  </Badge>
-                                </td>
-                                <td className="py-3 text-sm text-slate-400">
-                                  {tx.procedure_area ? `${formatNumber(Math.round(tx.procedure_area))} sqm` : '-'}
-                                </td>
-                                <td className="py-3 text-right">
-                                  <span className="text-sm font-medium text-emerald-400">
-                                    {tx.actual_worth ? formatPrice(tx.actual_worth) : '-'}
-                                  </span>
-                                </td>
-                                <td className="py-3 text-right text-sm text-slate-400">
-                                  {tx.meter_sale_price ? formatNumber(Math.round(tx.meter_sale_price)) : '-'}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                <TransactionsTable 
+                  areaName={areaName} 
+                  initialData={transactions}
+                  initialTotal={areaDetail?.stats?.total_transactions || thisArea?.transaction_count || 500}
+                />
               </TabsContent>
 
               <TabsContent value="buildings" className="mt-6">
