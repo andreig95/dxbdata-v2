@@ -56,9 +56,11 @@ export default function HomePage() {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="border-slate-700 hover:bg-slate-800">
-                View Market Report
-              </Button>
+              <Link href="/insights">
+                <Button size="lg" variant="outline" className="border-slate-700 hover:bg-slate-800">
+                  View Market Report
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
