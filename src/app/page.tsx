@@ -50,10 +50,12 @@ export default function HomePage() {
               compare areas, track developers, and make data-driven investment decisions.
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-              <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:opacity-90">
-                Explore Transactions
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+              <Link href="/transactions">
+                <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:opacity-90">
+                  Explore Transactions
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
               <Button size="lg" variant="outline" className="border-slate-700 hover:bg-slate-800">
                 View Market Report
               </Button>

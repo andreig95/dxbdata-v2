@@ -48,12 +48,19 @@ export interface Transaction {
 export interface QueryParams {
   area?: string
   building?: string
+  search?: string // Combined search for area, building, project
   transGroup?: string
   propertyType?: string
+  propertySubType?: string
+  propertyUsage?: string // Residential or Commercial
+  regType?: string // Ready or Off-plan
   fromDate?: string
   toDate?: string
   minPrice?: number
   maxPrice?: number
+  minSize?: number // in sqft
+  maxSize?: number // in sqft
+  developer?: string // keyword search in project/master project
   limit?: number
   offset?: number
   sortBy?: string
@@ -76,12 +83,24 @@ export function queryTransactions(params: QueryParams): QueryResult {
   const conditions: string[] = []
   const values: (string | number)[] = []
   
-  if (params.area) {
+  // Combined search - searches area, building, and project names
+  if (params.search) {
+    conditions.push(`(
+      area_name_en LIKE ? OR 
+      building_name_en LIKE ? OR 
+      project_name_en LIKE ? OR
+      master_project_en LIKE ?
+    )`)
+    const searchTerm = `%${params.search}%`
+    values.push(searchTerm, searchTerm, searchTerm, searchTerm)
+  }
+  
+  if (params.area && !params.search) {
     conditions.push('area_name_en LIKE ?')
     values.push(`%${params.area}%`)
   }
   
-  if (params.building) {
+  if (params.building && !params.search) {
     conditions.push('building_name_en LIKE ?')
     values.push(`%${params.building}%`)
   }
@@ -94,6 +113,24 @@ export function queryTransactions(params: QueryParams): QueryResult {
   if (params.propertyType) {
     conditions.push('property_type_en = ?')
     values.push(params.propertyType)
+  }
+  
+  // Property sub-type filter (apartment, villa, office, etc.)
+  if (params.propertySubType) {
+    conditions.push('property_sub_type_en LIKE ?')
+    values.push(`%${params.propertySubType}%`)
+  }
+  
+  // Property usage filter (Residential or Commercial)
+  if (params.propertyUsage) {
+    conditions.push('property_usage_en = ?')
+    values.push(params.propertyUsage)
+  }
+  
+  // Registration type filter (Ready or Off-plan)
+  if (params.regType) {
+    conditions.push('reg_type_en = ?')
+    values.push(params.regType)
   }
   
   if (params.fromDate) {
@@ -114,6 +151,27 @@ export function queryTransactions(params: QueryParams): QueryResult {
   if (params.maxPrice) {
     conditions.push('actual_worth <= ?')
     values.push(params.maxPrice)
+  }
+  
+  // Size filters (convert sqft to sqm for the query since DB stores sqm)
+  if (params.minSize) {
+    conditions.push(`procedure_area >= ?`)
+    values.push(params.minSize / SQM_TO_SQFT) // Convert sqft to sqm
+  }
+  
+  if (params.maxSize) {
+    conditions.push(`procedure_area <= ?`)
+    values.push(params.maxSize / SQM_TO_SQFT) // Convert sqft to sqm
+  }
+  
+  // Developer/keyword search in project names
+  if (params.developer) {
+    conditions.push(`(
+      project_name_en LIKE ? OR 
+      master_project_en LIKE ?
+    )`)
+    const devTerm = `%${params.developer}%`
+    values.push(devTerm, devTerm)
   }
   
   conditions.push("area_name_en IS NOT NULL AND area_name_en != ''")
