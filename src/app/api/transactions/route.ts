@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
-import { fetchDLDTransactions } from '@/lib/dld-api'
+import { queryTransactions } from '@/lib/dld-sqlite'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  const area = searchParams.get('area') || ''
+  const area = searchParams.get('area') || undefined
   const limit = parseInt(searchParams.get('limit') || '20')
   const offset = parseInt(searchParams.get('offset') || '0')
   const fromDate = searchParams.get('from') || undefined
@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   const transGroup = searchParams.get('type') || undefined // Sales, Mortgage, Gift
   const propertyType = searchParams.get('property') || undefined
   
-  const result = await fetchDLDTransactions({
+  const result = queryTransactions({
     area,
     limit,
     offset,
@@ -19,6 +19,8 @@ export async function GET(request: Request) {
     toDate,
     transGroup,
     propertyType,
+    sortBy: 'instance_date',
+    sortOrder: 'DESC',
   })
   
   return NextResponse.json({
@@ -27,6 +29,6 @@ export async function GET(request: Request) {
     page: Math.floor(offset / limit) + 1,
     pageSize: limit,
     totalPages: Math.ceil(result.total / limit),
-    source: result.source, // 'api' or 'sample' - shows data source
+    source: result.source,
   })
 }
