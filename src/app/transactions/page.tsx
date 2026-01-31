@@ -560,6 +560,13 @@ function TransactionsContent() {
                         <tr 
                           key={tx.transaction_id || idx} 
                           className="border-b border-slate-800/50 hover:bg-slate-800/30 cursor-pointer transition-colors"
+                          onClick={() => {
+                            const params = new URLSearchParams()
+                            if (tx.building_name_en) params.set('building', tx.building_name_en)
+                            if (tx.rooms_en) params.set('rooms', tx.rooms_en)
+                            if (tx.area_sqft) params.set('size', String(Math.round(tx.area_sqft)))
+                            router.push(`/property?${params.toString()}`)
+                          }}
                         >
                           <td className="px-4 py-3 text-sm text-slate-400">
                             {formatDate(tx.instance_date)}
