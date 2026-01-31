@@ -91,7 +91,7 @@ export function TransactionsTable({ areaName, initialData = [], initialTotal = 0
                     <th className="pb-3 font-medium">Type</th>
                     <th className="pb-3 font-medium">Size</th>
                     <th className="pb-3 font-medium text-right">Price</th>
-                    <th className="pb-3 font-medium text-right">Per sqm</th>
+                    <th className="pb-3 font-medium text-right">Per sqft</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -113,7 +113,7 @@ export function TransactionsTable({ areaName, initialData = [], initialTotal = 0
                         </Badge>
                       </td>
                       <td className="py-3 text-sm text-slate-400">
-                        {tx.procedure_area ? `${formatNumber(Math.round(tx.procedure_area))} sqm` : '-'}
+                        {tx.procedure_area ? `${formatNumber(Math.round(tx.procedure_area * 10.764))} sqft` : '-'}
                       </td>
                       <td className="py-3 text-right">
                         <span className="text-sm font-medium text-emerald-400">
@@ -121,7 +121,7 @@ export function TransactionsTable({ areaName, initialData = [], initialTotal = 0
                         </span>
                       </td>
                       <td className="py-3 text-right text-sm text-slate-400">
-                        {tx.meter_sale_price ? formatNumber(Math.round(tx.meter_sale_price)) : '-'}
+                        {tx.meter_sale_price ? formatNumber(Math.round(tx.meter_sale_price / 10.764)) : '-'}
                       </td>
                     </tr>
                   ))}

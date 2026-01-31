@@ -137,9 +137,9 @@ export default async function AreaDetailPage({ params }: PageProps) {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-slate-500">Price per sqm</p>
+                      <p className="text-sm text-slate-500">Price per sqft</p>
                       <p className="mt-1 text-2xl font-bold text-cyan-400">
-                        AED {formatNumber(Math.round(areaDetail?.stats?.avg_price_sqm || thisArea?.avg_price_sqm || 0))}
+                        AED {formatNumber(Math.round((areaDetail?.stats?.avg_price_sqm || thisArea?.avg_price_sqm || 0) / 10.764))}
                       </p>
                     </div>
                     <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-500/10">
