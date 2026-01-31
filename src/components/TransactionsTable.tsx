@@ -33,6 +33,32 @@ function formatNumber(num: number): string {
   return num.toLocaleString()
 }
 
+function formatDate(dateStr: string): string {
+  if (!dateStr) return '-'
+  // Handle DD-MM-YYYY format
+  if (dateStr.includes('-') && dateStr.split('-')[0].length <= 2) {
+    const [day, month, year] = dateStr.split('-')
+    const date = new Date(`${year}-${month}-${day}`)
+    if (!isNaN(date.getTime())) {
+      return date.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: '2-digit'
+      })
+    }
+  }
+  // Handle YYYY-MM-DD format
+  const date = new Date(dateStr)
+  if (!isNaN(date.getTime())) {
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: '2-digit'
+    })
+  }
+  return '-'
+}
+
 export function TransactionsTable({ areaName, initialData = [], initialTotal = 0 }: Props) {
   const [transactions, setTransactions] = useState<Transaction[]>(initialData)
   const [total, setTotal] = useState(initialTotal)
@@ -98,11 +124,7 @@ export function TransactionsTable({ areaName, initialData = [], initialTotal = 0
                   {transactions.map((tx, idx) => (
                     <tr key={tx.id || idx} className="border-b border-slate-800/50 hover:bg-slate-800/30">
                       <td className="py-3 text-sm text-slate-400">
-                        {tx.instance_date ? new Date(tx.instance_date).toLocaleDateString('en-GB', {
-                          day: '2-digit',
-                          month: 'short',
-                          year: '2-digit'
-                        }) : '-'}
+                        {formatDate(tx.instance_date)}
                       </td>
                       <td className="py-3">
                         <span className="text-sm text-white">{tx.building_name_en || '-'}</span>
