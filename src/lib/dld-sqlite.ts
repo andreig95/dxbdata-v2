@@ -96,8 +96,14 @@ export function queryTransactions(params: QueryParams): QueryResult {
   }
   
   if (params.area && !params.search) {
-    conditions.push('area_name_en LIKE ?')
-    values.push(`%${params.area}%`)
+    // Search across area, master_project, and project names
+    conditions.push(`(
+      area_name_en LIKE ? OR 
+      master_project_en LIKE ? OR 
+      project_name_en LIKE ?
+    )`)
+    const areaTerm = `%${params.area}%`
+    values.push(areaTerm, areaTerm, areaTerm)
   }
   
   if (params.building && !params.search) {
