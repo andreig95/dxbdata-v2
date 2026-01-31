@@ -34,3 +34,32 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Dubai Land Department API Integration
+
+The site can display **real transaction data** from Dubai Land Department via the Dubai Pulse API.
+
+### Setup
+
+1. Register at [Dubai Pulse](https://www.dubaipulse.gov.ae/)
+2. Request access to the "DLD Transactions" dataset
+3. Once approved, get your API Key and API Secret
+4. Add to your `.env.local`:
+
+```bash
+DUBAI_PULSE_API_KEY=your_api_key
+DUBAI_PULSE_API_SECRET=your_api_secret
+```
+
+5. Restart the app
+
+### Without API Access
+
+Without credentials, the site displays realistic sample data that mirrors the actual DLD data structure. This allows full development and testing before getting API access.
+
+### Data Available
+
+- Transaction history (sales, mortgages, gifts)
+- Property details (type, size, rooms, parking)
+- Location data (area, building, nearest metro/mall)
+- Pricing (total price, price per sqm)
